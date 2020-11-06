@@ -72,12 +72,15 @@ public class Main
 
     private static SumAndIteration findSumAndIteration(double x, double precision)
     {
-        int iteration;
-        for (iteration = 1; !checkAccuracyCalculations(x, iteration, precision); iteration++)
+        int iteration = 1;
+        double sum = 0;
+
+        while (!checkAccuracyCalculations(x, iteration, precision))
         {
-            findSumElements(x, iteration);
+            sum = findSumElements(x, iteration);
+            iteration++;
         }
-        return new SumAndIteration(findSumElements(x, iteration), iteration);
+        return new SumAndIteration(sum, iteration);
     }
 
     private static boolean checkAccuracyCalculations(double x, int elementNumber, double precision)
