@@ -9,43 +9,44 @@ public class Main
     {
         Locale.setDefault(Locale.ROOT);
 
-        double x = readX("variable x from -1 to 1");
-        double epsilon = readDouble("precision e");
-        int number = readInt("sequence member number n");
+        double x = readDouble("Enter variable x from -1 to 1: ");
+        while (!checkDomainX(x))
+        {
+            x = readDouble("Entered x does not belong to (-1; 1). Try again: ");
+        }
+        double epsilon = readDouble("Enter precision e: ");
+        int number = readInt("Enter sequence member number n: ");
 
         double sumSequenceMembers = findSumElements(x, number);
-        System.out.printf("Sum of %d members of a sequence: %f\n", number, sumSequenceMembers);
+        System.out.printf("The sum of %d members of a sequence is %f\n", number, sumSequenceMembers);
 
-        printResult(findSumAndIteration(x, epsilon), epsilon);
-        printResult(findSumAndIteration(x, epsilon / 10), epsilon / 10);
+        SumAndIteration sumWithEpsilon = findSumAndIteration(x, epsilon);
+        printResultWithPrecision(sumWithEpsilon, epsilon);
+
+        SumAndIteration sumWithEpsilonDivided10 = findSumAndIteration(x, epsilon / 10);
+        printResultWithPrecision(sumWithEpsilonDivided10, epsilon / 10);
 
         double functionValue = calcValue(x);
-        System.out.printf("Exact value of the function ln(1 + x): %f\n", functionValue);
-    }
-
-    private static double readX(String phrase)
-    {
-        double x = readDouble(phrase);
-        while (x <= -1 || x >= 1)
-        {
-            System.out.println("Entered x does not belong to (-1; 1). Try again.");
-            x = readDouble(phrase);
-        }
-        return x;
+        System.out.printf("Exact value of the function ln(1 + x) is %f\n", functionValue);
     }
 
     private static int readInt(String phrase)
     {
-        System.out.printf("Input %s: ", phrase);
+        System.out.print(phrase);
         Scanner scn = new Scanner(System.in);
         return scn.nextInt();
     }
 
     private static double readDouble(String phrase)
     {
-        System.out.printf("Input %s: ", phrase);
+        System.out.print(phrase);
         Scanner scn = new Scanner(System.in);
         return scn.nextDouble();
+    }
+
+    private static boolean checkDomainX(double x)
+    {
+        return x >= -1 && x <= 1;
     }
 
     private static double findElement(double x, int number)
@@ -75,17 +76,19 @@ public class Main
         int iteration = 1;
         double sum = 0;
 
-        while (!checkAccuracyCalculations(x, iteration, precision))
+        while (Math.abs(findElement(x, iteration)) > precision)
         {
-            sum = findSumElements(x, iteration);
+            if (iteration % 2 != 0)
+            {
+                sum += findElement(x, iteration);
+            }
+            else
+            {
+                sum -= findElement(x, iteration);
+            }
             iteration++;
         }
         return new SumAndIteration(sum, iteration);
-    }
-
-    private static boolean checkAccuracyCalculations(double x, int elementNumber, double precision)
-    {
-        return Math.abs(findSumElements(x, elementNumber + 1) - findSumElements(x, elementNumber)) <= precision;
     }
 
     private static double calcValue(double x)
@@ -93,7 +96,7 @@ public class Main
         return Math.log(x + 1);
     }
 
-    private static void printResult(SumAndIteration sumAndIteration, double precision)
+    private static void printResultWithPrecision(SumAndIteration sumAndIteration, double precision)
     {
         System.out.printf("The sum of the first %d elements with precision %f is %f\n",
                 sumAndIteration.getIteration(), precision, sumAndIteration.getSum());
