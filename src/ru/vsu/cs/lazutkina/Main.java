@@ -75,16 +75,17 @@ public class Main
     {
         int iteration = 1;
         double sum = 0;
+        double element = findElement(x, iteration);
 
-        while (Math.abs(findElement(x, iteration)) > precision)
+        while (Math.abs(element) > precision)
         {
             if (iteration % 2 != 0)
             {
-                sum += findElement(x, iteration);
+                sum += element;
             }
             else
             {
-                sum -= findElement(x, iteration);
+                sum -= element;
             }
             iteration++;
         }
